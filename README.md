@@ -13,4 +13,4 @@ Deployment
 4.  The template application is up and running with the default sample dataset.
 
 For more details on how to install the template and the underlying technology please refer to the 
-[guide documents](doc/Installation Guide-POIs.docx) inside the 'doc' folder. 
+[guide documents](doc/Installation Guide-Parking.docx) inside the 'doc' folder. 
