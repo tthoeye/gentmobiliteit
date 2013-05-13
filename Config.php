@@ -41,6 +41,12 @@ define("USE_DATABASE", false);
 // Map Options (coords point to center of Manchester)
 define("MAP_CENTER_LATITUDE", 53.477057);
 define("MAP_CENTER_LONGITUDE", -2.238957);
+
+//  Athens city center Coords
+//define("MAP_CENTER_LATITUDE", 37.992208);
+//define("MAP_CENTER_LONGITUDE", 23.731598);
+
+
 define("MAP_ZOOM", 16);
 
 // database

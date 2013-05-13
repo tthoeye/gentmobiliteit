@@ -123,10 +123,19 @@ function setInfoWindowParkingPoi(poi)
 
     /* Get the Parking specific attributes of the POI */
     if (getCitadel_attr(poi, "#Citadel_parkCapacity").term != null && getCitadel_attr(poi, "#Citadel_parkCapacity").term != '') {
-        capacity = "<div class='capacity'>" +
-            getCitadel_attr(poi, "#Citadel_parkCapacity").term +
-            ":" + getCitadel_attr(poi, "#Citadel_parkCapacity").text +
-            "</div>";
+        if (getCitadel_attr(poi, "#Citadel_parkSpaces").term != null && getCitadel_attr(poi, "#Citadel_parkSpaces").term != '') {
+
+            capacity = "<div class='capacity'>" +
+                    getCitadel_attr(poi, "#Citadel_parkSpaces").text +
+                    " of " +
+                    +getCitadel_attr(poi, "#Citadel_parkCapacity").text + " slots available</div>";
+        }
+        else {
+            capacity = "<div class='capacity'>" +
+                    getCitadel_attr(poi, "#Citadel_parkCapacity").term +
+                    ":" + getCitadel_attr(poi, "#Citadel_parkCapacity").text +
+                    "</div>";
+        }
     }
 
     var contentTemplate =
@@ -153,6 +162,7 @@ function setDetailPageParkingPoi(poi)
     var parkType = getCitadel_attr(poi, "#Citadel_parkType").text;
     var parkFloors = getCitadel_attr(poi, "#Citadel_parkFloors").text;
     var parkCapacity = getCitadel_attr(poi, "#Citadel_parkCapacity").text;
+    var parkSpaces = getCitadel_attr(poi, "#Citadel_parkSpaces").text;
     var openHours = getCitadel_attr(poi, "#Citadel_openHours").text;
     var nearTransport = getCitadel_attr(poi, "#Citadel_nearTransport").text;
     var otherAttributes = getCitadel_attrs(poi, "");
@@ -173,6 +183,8 @@ function setDetailPageParkingPoi(poi)
         contentTemplate += "<li><span class='image-icon'><img src='images/small-parking.png' alt='Parking' /></span><span class='image-text'>" + parkType + "</span></li>";
     if (parkCapacity)
         contentTemplate += "<li><span class='image-icon'><img src='images/small-slots.png' alt='Slots' /></span><span class='image-text'>" + parkCapacity + " slots</span></li>";
+    if (parkSpaces)
+        contentTemplate += "<li><span class='image-icon'><img src='images/small-spaces.png' alt='Spaces' /></span><span class='image-text'>" + parkSpaces + " available</span></li>";
     if (openHours)
         contentTemplate += "<li><span class='image-icon'><img src='images/small-openhours.png' alt='Open hours' /></span><span class='image-text'>" + openHours + "</span></li>";
     if (nearTransport)
@@ -199,7 +211,7 @@ function setListPageParkingPois()
     $.each(pois, function(i, poi) {
         var parkType = getCitadel_attr(poi, "#Citadel_parkType").text;
         var parkCapacity = getCitadel_attr(poi, "#Citadel_parkCapacity").text;
-
+        var parkSpaces = getCitadel_attr(poi, "#Citadel_parkSpaces").text;
         var capacity = "";
         if (getCitadel_attr(poi, "#Citadel_parkCapacity").term != '') {
             capacity = "<p>" +
@@ -208,15 +220,22 @@ function setListPageParkingPois()
                 "</p>";
         }
 
+        var spaces = "";
+        if (getCitadel_attr(poi, "#Citadel_parkSpaces").term != '') {
+            spaces = "<p>" +
+                    getCitadel_attr(poi, "#Citadel_parkSpaces").text +
+                    " available" +
+                    "</p>";
+        }
         contentTemplate +=
-            "<li>" +
-            "<a href='' onclick='overrideDetailClick(\"" + poi.id + "\"); return false;'>" +
-            "<img src='" + getMarkerImage(poi, 'list') + "' alt='Parking' />" +
-            "<h3>" + poi.title + "</h3>" +
-            "<h4>" + poi.description + "</h4>" +
-            capacity +
-            "</a>" +
-            "</li>";
+                "<li>" +
+                "<a href='' onclick='overrideDetailClick(\"" + poi.id + "\"); return false;'>" +
+                "<img src='" + getMarkerImage(poi, 'list') + "' alt='Parking' />" +
+                "<h3>" + poi.title + "</h3>" +
+                "<h4>" + poi.description + "</h4>" +
+                capacity + spaces +
+                "</a>" +
+                "</li>";
     });
 
     return contentTemplate;
@@ -248,7 +267,8 @@ function setInfoPage()
  *  #Citadel_email                                                           
  *  #Citadel_parkType                                                                                
  *  #Citadel_parkFloors                                                                                                      
- *  #Citadel_parkCapacity                                                                                                                          
+ *  #Citadel_parkCapacity  
+ *  #Citadel_parkSpaces                                                                                                                        
  *  #Citadel_image                                                                                                                                               
  *  #Citadel_eventStart                                                                                                                                                                    
  *  #Citadel_eventEnd
@@ -356,7 +376,7 @@ $(document).ready(function() {
 
     /* Click handler for the 'near me' button */
     $('.pois-nearme').click(function() {
-        lastLoaded = 'mearme';
+        lastLoaded = 'nearme';
         $.mobile.changePage("#page1", { transition: "none"});
         $('.navbar > ul > li > a').removeClass('ui-btn-active');
         $('.pois-nearme').addClass('ui-btn-active');
