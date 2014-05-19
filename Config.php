@@ -10,7 +10,7 @@
  * for example: "C:/wamp/www/" is the default root web dir in a standard wampServer setup)
  ***********************************************************
  */
-define("HTDOCS_ROOT", "");  
+define("HTDOCS_ROOT", "/code/");  
 		
 /*********************************************************** 
  * Replace 'localhost' with your IP address, 
@@ -26,7 +26,7 @@ define("SERVERNAME", "http://localhost/");
  ***********************************************************
  */
 		
-define("BASE_DIR", "Citadel-Parkings-Template/" );
+define("BASE_DIR", "gentmobiliteit/" );
 define("CLASSES_DIR", "php/");
 define("CLASSES", HTDOCS_ROOT . BASE_DIR . CLASSES_DIR);
  
@@ -39,15 +39,15 @@ define("DATASET_URL", SERVERNAME . BASE_DIR . "dataset.php");
 define("USE_DATABASE", false);
 
 // Map Options (coords point to center of Manchester)
-define("MAP_CENTER_LATITUDE", 53.477057);
-define("MAP_CENTER_LONGITUDE", -2.238957);
+define("MAP_CENTER_LATITUDE", 51.05);
+define("MAP_CENTER_LONGITUDE", 3.7252215);
 
 //  Athens city center Coords
 //define("MAP_CENTER_LATITUDE", 37.992208);
 //define("MAP_CENTER_LONGITUDE", 23.731598);
 
 
-define("MAP_ZOOM", 16);
+define("MAP_ZOOM", 14);
 
 // database
 define("DB_USERNAME", "root");

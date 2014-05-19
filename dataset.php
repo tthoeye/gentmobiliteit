@@ -1,4 +1,4 @@
-<?php
+<?php 
 header('Content-type: application/json; charset=utf-8');
 header("Expires: Tue, 01 Jan 2000 00:00:00 GMT");
 header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
@@ -10,32 +10,155 @@ include_once CLASSES.'Response.class.php';
 include_once CLASSES.'PoisDataset.class.php';
 include_once CLASSES.'Util.class.php';
 
-include_once CLASSES.'Database.class.php';
+define("SERVICEURI", "http://apiHermes:api__M0b1l3@www.deparking.be/api/v1.1/parkings/Gent");
+/*
+We want to output somthing like:
 
+{
+  "dataset": {
+    "id": "http://data.gent.be/datasets/parkeergarages",
+    "updated": "20091018T00:00:00-5:00",
+    "created": "20040122T09:38:21-5:00",
+    "lang": "nl-NL",
+    "author": {
+      "id": "http://www.parkeerbedrijf.gent.be",
+      "value": "IVA Mobiliteitsbedrijf Stad Gent"
+    },
+    "license": {
+      "href": "http://www.creativecommons.org/CC-A/3.0/license/xml",
+      "term": "CC BY 3.0"
+    },
+    "link": {
+      "href": "http://www.parkeerbedrijf.gent.be",
+      "term": "source"
+    },
+	"updatefrequency":"semester",
+    "poi": [
+      {
+        "id": "citadel_parking_1",
+        "title": "P01 Vrijdagmarkt",
+        "description": "24/24 open.",
+        "category": [
+          "Parking"
+        ],
+        "location": {
+          "point": {
+            "term": "centroid",
+            "pos": {
+              "srsName": "http://www.opengis.net/def/crs/EPSG/0/4326",
+              "posList": "51.057071972308215 3.725840449333191"
+            }
+          },
+          "address":{
+		       "value":"Vrijdagmarkt 1",
+			   "postal":"9000",
+			   "city":"Gent"
+		  }
+        },
+        "attribute": [
+          {
+            "term": "Phone",
+            "type": "tel",
+            "text": "09/2662900",
+	    "tplIdentifier" : "#Citadel_telephone" 
+          },
+          {
+            "term": "Capacity",
+            "type": "string",
+            "text": "629",
+	    "tplIdentifier" : "#Citadel_parkCapacity"
+          },
+          {
+            "term": "Floors",
+            "type": "string",
+            "text": "3",
+	    "tplIdentifier" : "#Citadel_parkFloors"
+          },
+          {
+            "term": "parkingType",
+            "type": "string",
+            "text": "underground",
+	    "tplIdentifier" : "#Citadel_parkType" 
+          }          
+        ]
+      },
+      
+*/
 
-if(USE_DATABASE) {
-	// open db connection
-	Database::connect();
-	
-	$poisDataset = Response::createFromDb(DatasetTypes::Poi, DATASET_ID);
-	Util::printJsonObj(new Response($poisDataset));
-	
-	Database::disconnect();
+function getData() {
+  // @TODO checks
+  $json = file_get_contents(SERVICEURI);
+  $parkings = json_decode($json, true);
+  return $parkings["parkings"];
 }
-else {
-	$handle = fopen(DATASET_FILE, "r");
-	$json = fread($handle, filesize(DATASET_FILE));
-	fclose($handle);
-	
-// 	echo $json;
 
-	// TODO: should type check the source file
-	$assocArray = json_decode($json, true);
+// Start building output Array
 
-	$poisDataset = Response::createFromArray(DatasetTypes::Poi, $assocArray);
-	Util::printJsonObj(new Response($poisDataset));
+$now = new DateTime();
+
+$output = Array();
+$output["dataset"] = Array();
+$output["dataset"]["updated"] = $now->format('c');
+$output["dataset"]["created"] = "2014-05-19T11:10:30+02:00";
+$output["dataset"]["lang"] = "nl-NL";
+$output["dataset"]["author"] = array(
+  "id" => "http://www.parkeerbedrijf.gent.be",
+  "value" => "IVA Mobiliteitsbedrijf Stad Gent"
+);
+$output["dataset"]["license"] = array(
+  "href" => "http://www.creativecommons.org/CC-A/3.0/license/xml",
+  "term" => "CC BY 3.0"
+);
+$output["dataset"]["link"] = array(
+  "href" => "http://www.parkeerbedrijf.gent.be",
+  "term" => "source"
+);
+$output["dataset"]["updatefrequency"] = "1 minute";
+$output["dataset"]["id"] = "http://data.gent.be/datasets/parkeergarages";
+$output["dataset"]["poi"] = Array();
+
+$parkings = getData();
+foreach($parkings as $parking) {
+  //print_r($parking);
+  $output["dataset"]["poi"][] = array(
+    "id" => $parking['name'],
+    "title" => $parking['description'],
+    "description" => $parking['description'],
+    "category" => array(
+       "parking", "gent", "mobiliteit"
+    ),
+    "location" => array(
+      "point" => array(
+        "term" => "centroid",
+        "pos" => array(
+           "srsName" => "http://www.opengis.net/def/crs/EPSG/0/4326",
+           "posList" => $parking['latitude'] . " " . $parking["longitude"],
+        )
+      ),
+      "address" => array(
+        "value" => strip_tags($parking["address"]),
+        "postal" => "9000",
+        "city" => "Gent"
+      )
+    ),
+    "attribute" => array(
+      array(
+        "term" => "Capacity",
+        "type" => "string",
+        "text" => $parking["availableCapacity"],
+	      "tplIdentifier" => "#Citadel_parkCapacity"
+	    ),
+      array(
+        "term" => "Capacity",
+        "type" => "string",
+        "text" => "http://www.mobiliteitgent.be/",
+	      "tplIdentifier" => "#Citadel_website"
+	    ),
+    ),
+  );
 }
 
-
+$poisDataset = Response::createFromArray(DatasetTypes::Poi, $output);
+Util::printJsonObj(new Response($poisDataset));
 
 ?>
