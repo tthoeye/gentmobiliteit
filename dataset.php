@@ -11,79 +11,6 @@ include_once CLASSES.'PoisDataset.class.php';
 include_once CLASSES.'Util.class.php';
 
 define("SERVICEURI", "http://apiHermes:api__M0b1l3@www.deparking.be/api/v1.1/parkings/Gent");
-/*
-We want to output somthing like:
-
-{
-  "dataset": {
-    "id": "http://data.gent.be/datasets/parkeergarages",
-    "updated": "20091018T00:00:00-5:00",
-    "created": "20040122T09:38:21-5:00",
-    "lang": "nl-NL",
-    "author": {
-      "id": "http://www.parkeerbedrijf.gent.be",
-      "value": "IVA Mobiliteitsbedrijf Stad Gent"
-    },
-    "license": {
-      "href": "http://www.creativecommons.org/CC-A/3.0/license/xml",
-      "term": "CC BY 3.0"
-    },
-    "link": {
-      "href": "http://www.parkeerbedrijf.gent.be",
-      "term": "source"
-    },
-	"updatefrequency":"semester",
-    "poi": [
-      {
-        "id": "citadel_parking_1",
-        "title": "P01 Vrijdagmarkt",
-        "description": "24/24 open.",
-        "category": [
-          "Parking"
-        ],
-        "location": {
-          "point": {
-            "term": "centroid",
-            "pos": {
-              "srsName": "http://www.opengis.net/def/crs/EPSG/0/4326",
-              "posList": "51.057071972308215 3.725840449333191"
-            }
-          },
-          "address":{
-		       "value":"Vrijdagmarkt 1",
-			   "postal":"9000",
-			   "city":"Gent"
-		  }
-        },
-        "attribute": [
-          {
-            "term": "Phone",
-            "type": "tel",
-            "text": "09/2662900",
-	    "tplIdentifier" : "#Citadel_telephone" 
-          },
-          {
-            "term": "Capacity",
-            "type": "string",
-            "text": "629",
-	    "tplIdentifier" : "#Citadel_parkCapacity"
-          },
-          {
-            "term": "Floors",
-            "type": "string",
-            "text": "3",
-	    "tplIdentifier" : "#Citadel_parkFloors"
-          },
-          {
-            "term": "parkingType",
-            "type": "string",
-            "text": "underground",
-	    "tplIdentifier" : "#Citadel_parkType" 
-          }          
-        ]
-      },
-      
-*/
 
 function getData() {
   // @TODO checks
@@ -145,8 +72,14 @@ foreach($parkings as $parking) {
       array(
         "term" => "Capacity",
         "type" => "string",
-        "text" => $parking["availableCapacity"],
+        "text" => $parking["totalCapacity"],
 	      "tplIdentifier" => "#Citadel_parkCapacity"
+	    ),
+	    array(
+        "term" => "Capacity",
+        "type" => "string",
+        "text" => $parking["availableCapacity"],
+	      "tplIdentifier" => "#Citadel_parkSpaces"
 	    ),
       array(
         "term" => "Capacity",
